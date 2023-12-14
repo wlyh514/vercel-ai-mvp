@@ -1,6 +1,6 @@
 import { Message } from "@/types/api";
 import React from "react";
-import {EnumType, enumFactory} from "rusty-enum";
+import { EnumType, enumFactory } from "rusty-enum";
 
 type Chat = {
     createdAt: number;
@@ -10,23 +10,25 @@ type MessageId = number;
 
 type IDBAccessFunctions = {
     chatHistory: {
-        createChat: (messages: Message[]) => void; 
-        deleteChat: (messageId: MessageId) => void; 
-        appendChat: (messageId: MessageId, message: Message) => void; 
-        getChat: (MessageId: MessageId) => Promise<Chat>;
+        createChat(messages: Message[]): Promise<void>;
+        deleteChat(messageId: MessageId): Promise<void>;
+        appendChat(messageId: MessageId, message: Message): Promise<void>;
+        getChat(MessageId: MessageId): Promise<Chat>;
     }
 };
 
 type IDBState = {
     NotSupported: null;
-    Error: string; 
+    Error: string;
     Loading: null;
     Ok: IDBAccessFunctions;
 };
 const IDBState = enumFactory<IDBState>();
 
-const DB_VERSION = 1; 
+const DB_VERSION = 1;
 const DB_NAME = "gpt4-db";
+
+const HISTORY_CHAT_STORE = "history-chats"
 
 const IDBContext = React.createContext<EnumType<IDBState>>(IDBState.Loading());
 
@@ -36,7 +38,19 @@ export const IDBContextProvider: React.FC<React.PropsWithChildren> = ({ children
     const [state, setState] = React.useState<EnumType<IDBState>>(IDBState.Loading());
 
     const accessFns: IDBAccessFunctions = {
+        chatHistory: {
+            async createChat(messages) {
+                if (!db) return;
+                return new Promise((res, rej) => {
+                    const transaction = db.transaction([HISTORY_CHAT_STORE], "readwrite");
+                    transaction.oncomplete = _ => res();
+                    transaction.onerror = ev => rej(ev);
 
+                    const store = transaction.objectStore(HISTORY_CHAT_STORE);
+                    const request = store.add()
+                });
+            }
+        }
     };
 
     React.useEffect(() => {
@@ -52,18 +66,18 @@ export const IDBContextProvider: React.FC<React.PropsWithChildren> = ({ children
         }
 
         request.onsuccess = _ => {
-            setState(IDBState.Ok({}));
+            setState(IDBState.Ok(accessFns));
             setDB(request.result);
         }
 
         request.onupgradeneeded = ev => {
-            const db = ((ev.target) as any as {result: IDBDatabase}).result;
+            const db = ((ev.target) as any as { result: IDBDatabase }).result;
 
-            const historyStore = db.createObjectStore("history-chats", {autoIncrement: true});
+            const historyStore = db.createObjectStore(HISTORY_CHAT_STORE, { autoIncrement: true });
 
-            historyStore.createIndex("createdAt", "createdAt", {unique: false});
+            historyStore.createIndex("createdAt", "createdAt", { unique: false });
             setDB(db);
-            
+
         }
 
         return () => {
@@ -75,6 +89,6 @@ export const IDBContextProvider: React.FC<React.PropsWithChildren> = ({ children
     }, []);
 
     return <IDBContext.Provider value={state}>
-        { children }
+        {children}
     </IDBContext.Provider>
 };
