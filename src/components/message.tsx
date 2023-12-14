@@ -1,22 +1,13 @@
 "use client";
-
-import { ChatCompletionRequestMessageFunctionCall } from "openai-edge/types/api";
+import {Message} from "api";
 import React from "react";
 import { Avatar, Box, Typography } from "@mui/material";
 import { Computer } from "@mui/icons-material";
 import { blue, grey } from "@mui/material/colors";
 
 type Prop = {
-  message: {
-    id: string;
-    createdAt?: Date;
-    content: string;
-    role: "system" | "user" | "assistant" | "function";
-    name?: string;
-    function_call?: string | ChatCompletionRequestMessageFunctionCall;
-  };
+  message: Message
 };
-
 const MessageComponent: React.FC<Prop> = ({ message }) => {
   const { role, content } = message;
   return (
@@ -32,7 +23,7 @@ const MessageComponent: React.FC<Prop> = ({ message }) => {
       ) : (
         <Avatar sx={{ bgcolor: blue[500] }}>您</Avatar>
       )}
-      <Typography>{content}</Typography>
+      <Typography sx={{whiteSpace: "pre-wrap"}}>{content}</Typography>
     </Box>
   );
 };

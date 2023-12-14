@@ -37,7 +37,7 @@ const HomePage: React.FC = () => {
             <Grid item flex={1} overflow={"auto"}>
               <List>
                 {messages.map((m, i) => (
-                  <MessageComponent key={`message ${i}`} message={m as any} />
+                  <MessageComponent key={`message ${i}`} message={m} />
                 ))}
                 {isLoading && messages.at(-1)?.role !== "assistant" ? (
                   <Typography>加载中...</Typography>
