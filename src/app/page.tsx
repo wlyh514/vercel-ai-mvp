@@ -33,8 +33,8 @@ const HomePage: React.FC = () => {
 
       <Grid item flex={1} overflow={"auto"}>
         <Container sx={{ height: "100%" }}>
-          <Grid width="100%" height="100%" container flexDirection={"column"}>
-            <Grid item flex={1} overflow={"auto"}>
+          <Grid width="100%" container flexDirection={"column"}>
+            <Grid item flex={1} overflow={"auto"} mb={"5rem"}>
               <List>
                 {messages.map((m, i) => (
                   <MessageComponent key={`message ${i}`} message={m as any} />
@@ -44,7 +44,7 @@ const HomePage: React.FC = () => {
                 ) : null}
               </List>
             </Grid>
-            <Grid item alignSelf={"flex-end"} width={"100%"} paddingBottom={3}>
+            <Grid item alignSelf={"flex-end"} width={"80%"} paddingBottom={3} position={"fixed"} bottom={0} left={"10%"}>
               <form onSubmit={handleSubmit}>
                 <TextField
                   multiline
