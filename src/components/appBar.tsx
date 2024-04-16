@@ -6,10 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { useRouter } from "next/navigation";
@@ -21,7 +18,7 @@ interface Page {
 
 const pages: Page[] = [
   {
-    name: "关于",
+    name: "关于/About",
     path: "/about",
   },
 ];
@@ -58,8 +55,8 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static">
-      <Container maxWidth="xl">
+    <AppBar position="sticky" sx={{ px: { xs: 0, md: '5rem' } }}>
+      <Box>
         <Toolbar disableGutters>
           <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
@@ -74,6 +71,9 @@ function ResponsiveAppBar() {
               fontWeight: 700,
               color: "inherit",
               textDecoration: "none",
+              "&:hover": {
+                cursor: "pointer"
+              }
             }}
           >
             GPT-4 Streaming MVP
@@ -110,7 +110,7 @@ function ResponsiveAppBar() {
             >
               {pages.map((page) => (
                 <MenuItem key={page.name} onClick={routeTo(page.path)}>
-                  <Typography textAlign="center" component="a">
+                  <Typography textAlign="center" component="a" textTransform="capitalize">
                     {page.name}
                   </Typography>
                 </MenuItem>
@@ -140,7 +140,7 @@ function ResponsiveAppBar() {
               <Button
                 key={page.name}
                 onClick={routeTo(page.path)}
-                sx={{ my: 2, color: "white", display: "block" }}
+                sx={{ my: 2, color: "white", display: "block", textTransform: "capitalize" }}
               >
                 {page.name}
               </Button>
@@ -177,7 +177,7 @@ function ResponsiveAppBar() {
             </Menu>
           </Box> */}
         </Toolbar>
-      </Container>
+      </Box>
     </AppBar>
   );
 }
