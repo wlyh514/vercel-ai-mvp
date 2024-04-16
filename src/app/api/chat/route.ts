@@ -18,13 +18,16 @@ export async function POST(req: Request) {
   const { messages } = (await req.json()) as {
     messages: ChatCompletionRequestMessage[];
   };
+  if (!messages) {
+    return new Response('', {status: 400});
+  }
 
   // Ask OpenAI for a streaming completion given the prompt
   const response = await openai.createChatCompletion({
     model: "gpt-4",
     stream: true,
     temperature: 1,
-    messages,
+    messages: [{'role': 'system', 'content': 'You are a helpful AI assistant called GPT-4, you may format your reply in Markdown if necessary. '}, ...messages],
   });
 
   // Convert the response into a friendly text-stream
